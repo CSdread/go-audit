@@ -21,6 +21,7 @@ func Register(name string, factory AuditWriterFactory) {
 	if registered {
 		slog.Info.Printf("Audit writer factory %s already registered. Ignoring.", name)
 	}
+
 	auditWriterFactories[name] = factory
 }
 
@@ -32,6 +33,7 @@ func CreateAuditWriter(auditWriterName string, config *viper.Viper) (*AuditWrite
 	}
 
 	// Run the factory with the configuration.
+	slog.Info.Printf("Creating writer %s", auditWriterName)
 	return auditWriterFactory(config)
 }
 

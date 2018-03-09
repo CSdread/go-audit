@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/pantheon-systems/go-audit/pkg/slog"
 	"github.com/spf13/viper"
 )
 
@@ -19,7 +18,7 @@ func NewStdoutWriter(config *viper.Viper) (*AuditWriter, error) {
 	}
 
 	// info logger is no longer stdout
-	slog.Info.SetOutput(os.Stderr)
+	//slog.Info.SetOutput(os.Stderr)
 
 	return NewAuditWriter(os.Stdout, attempts), nil
 }

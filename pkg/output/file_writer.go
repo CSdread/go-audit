@@ -11,10 +11,10 @@ import (
 )
 
 func init() {
-	Register("file", NewFileWriter)
+	register("file", newFileWriter)
 }
 
-func NewFileWriter(config *viper.Viper) (*AuditWriter, error) {
+func newFileWriter(config *viper.Viper) (*AuditWriter, error) {
 	attempts := config.GetInt("output.file.attempts")
 	if attempts < 1 {
 		return nil, fmt.Errorf("Output attempts for file must be at least 1, %v provided", attempts)

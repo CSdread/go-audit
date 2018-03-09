@@ -4,21 +4,22 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/pantheon-systems/go-audit/pkg/slog"
 	"github.com/spf13/viper"
 )
 
 func init() {
-	Register("stdout", NewStdoutWriter)
+	register("stdout", newStdoutWriter)
 }
 
-func NewStdoutWriter(config *viper.Viper) (*AuditWriter, error) {
+func newStdoutWriter(config *viper.Viper) (*AuditWriter, error) {
 	attempts := config.GetInt("output.stdout.attempts")
 	if attempts < 1 {
 		return nil, fmt.Errorf("Output attempts for stdout must be at least 1, %v provided", attempts)
 	}
 
 	// info logger is no longer stdout
-	//slog.Info.SetOutput(os.Stderr)
+	slog.Info.SetOutput(os.Stderr)
 
 	return NewAuditWriter(os.Stdout, attempts), nil
 }

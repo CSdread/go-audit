@@ -10,14 +10,14 @@ type PubSubWriter struct {
 }
 
 func init() {
-	Register("pubsub", NewPubSubWriter)
+	register("pubsub", newPubSubWriter)
 }
 
 func (w *PubSubWriter) Write(p []byte) (n int, err error) {
 	return 0, nil
 }
 
-func NewPubSubWriter(config *viper.Viper) (*AuditWriter, error) {
+func newPubSubWriter(config *viper.Viper) (*AuditWriter, error) {
 	attempts := config.GetInt("output.pubsub.attempts")
 	if attempts < 1 {
 		return nil, fmt.Errorf("Output attempts for stdout must be at least 1, %v provided", attempts)

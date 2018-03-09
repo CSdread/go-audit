@@ -13,7 +13,7 @@ type AuditWriterFactory func(conf *viper.Viper) (*AuditWriter, error)
 
 var auditWriterFactories = make(map[string]AuditWriterFactory)
 
-func Register(name string, factory AuditWriterFactory) {
+func register(name string, factory AuditWriterFactory) {
 	if factory == nil {
 		slog.Error.Fatalf("Audit writer factory %s does not exist.", name)
 	}

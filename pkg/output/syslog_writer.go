@@ -12,10 +12,10 @@ import (
 )
 
 func init() {
-	Register("syslog", NewSyslogWriter)
+	register("syslog", newSyslogWriter)
 }
 
-func NewSyslogWriter(config *viper.Viper) (*AuditWriter, error) {
+func newSyslogWriter(config *viper.Viper) (*AuditWriter, error) {
 	attempts := config.GetInt("output.syslog.attempts")
 	if attempts < 1 {
 		return nil, fmt.Errorf("Output attempts for syslog must be at least 1, %v provided", attempts)
@@ -44,7 +44,7 @@ func handleLogRotation(config *viper.Viper, writer *AuditWriter) {
 	signal.Notify(sigc, syscall.SIGUSR1)
 
 	for range sigc {
-		newWriter, err := NewSyslogWriter(config)
+		newWriter, err := newSyslogWriter(config)
 		if err != nil {
 			slog.Error.Fatalln("Error re-opening log file. Exiting.")
 		}

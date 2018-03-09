@@ -3,7 +3,11 @@ package main
 import (
 	"errors"
 	"io/ioutil"
+	"net"
 	"os"
+	"os/user"
+	"path"
+	"strconv"
 	"syscall"
 	"testing"
 
@@ -93,6 +97,49 @@ func Test_setRules(t *testing.T) {
 
 	assert.Equal(t, 2, r, "Wrong number of correct rule set attempts")
 	assert.Nil(t, err)
+}
+
+func Test_createOutput(t *testing.T) {
+	// no outputs
+	c := viper.New()
+	w, err := createOutput(c)
+	assert.EqualError(t, err, "No outputs were configured")
+	assert.Nil(t, w)
+
+	// multiple outputs
+	uid := os.Getuid()
+	gid := os.Getgid()
+	u, _ := user.LookupId(strconv.Itoa(uid))
+	g, _ := user.LookupGroupId(strconv.Itoa(gid))
+
+	// travis-ci is silly
+	if u.Username == "" {
+		u.Username = g.Name
+	}
+
+	l, err := net.Listen("tcp", ":0")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer l.Close()
+
+	c = viper.New()
+	c.Set("output.syslog.enabled", true)
+	c.Set("output.syslog.attempts", 1)
+	c.Set("output.syslog.network", "tcp")
+	c.Set("output.syslog.address", l.Addr().String())
+
+	c.Set("output.file.enabled", true)
+	c.Set("output.file.attempts", 1)
+	c.Set("output.file.path", path.Join(os.TempDir(), "go-audit.test.log"))
+	c.Set("output.file.mode", 0644)
+	c.Set("output.file.user", u.Username)
+	c.Set("output.file.group", g.Name)
+
+	w, err = createOutput(c)
+	assert.EqualError(t, err, "Only one output can be enabled at a time")
+	assert.Nil(t, w)
 }
 
 func Test_createFilters(t *testing.T) {

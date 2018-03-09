@@ -9,10 +9,10 @@ import (
 )
 
 func init() {
-	register("stdout", newStdoutWriter)
+	register("stdout", newStdOutWriter)
 }
 
-func newStdoutWriter(config *viper.Viper) (*AuditWriter, error) {
+func newStdOutWriter(config *viper.Viper) (*AuditWriter, error) {
 	attempts := config.GetInt("output.stdout.attempts")
 	if attempts < 1 {
 		return nil, fmt.Errorf("Output attempts for stdout must be at least 1, %v provided", attempts)
